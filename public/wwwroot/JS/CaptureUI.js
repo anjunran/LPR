@@ -80,7 +80,13 @@ class CaptureUI {
       this.updateCameraList();
     } else if (source.file) {
       // Something to handle what happen when source selected by user is file-upload
+    } else if (!source.device && !source.file) {
+      this.displayManager.toggleSourceSignal(false);
     }
+
+    console.log("source-ready");
+    
+    this.displayManager.toggleSourceSignal(true);
   }
 
   updateCameraList(dropdownId = "#video-device-select") {
@@ -135,11 +141,14 @@ class CaptureUI {
   }
 
   onCameraReady(stream) {
-    if (this.getVideoPlayer()) this.displayManager.setSourceStream(stream);
+    if (this.getVideoPlayer()) {
+      this.displayManager.setSourceStream(stream);
+    }
   }
 
   onFileReady(stream) {
-    const videoPlayer = this.getVideoPlayer();
-    if (this.getVideoPlayer()) this.displayManager.setSourceFile(stream);
+    if (this.getVideoPlayer()) {
+      this.displayManager.setSourceFile(stream);
+    }
   }
 }

@@ -1,5 +1,5 @@
 <div class="app-devices w3-container w3-animate-opacity" id="app-slide">
-    <section class="w3-container">
+    <section class="w3-container w3-margin-bottom">
         <div class="w3-bar w3-bar-item">
             <select class="w3-select w3-bar-item w3-small w3-round w3-border" id="video-mode">
                 <option selected disabled value="">
@@ -13,16 +13,20 @@
 
     <section class="w3-container">
         <div class="w3-row">
-            <div class="w3-col">
-                <video class="w3-round-large" id="video" style="border: 5px solid lime;"></video>
+            <div class="w3-col w3-round-large w3-black w3-card w3-padding-small"
+                style="display: flex; position: relative; overflow: hidden;">
+                <video class="w3-round-large w3-card" id="video"
+                    style="min-width: 300px;width: 100%; height: 50vh; margin: auto;"></video>
             </div>
         </div>
 
         <div class="w3-row">
             <div class="w3-col">
                 <div class="w3-bar">
-                    <div class="w3-bar-item w3-small">
-                        
+                    <div class="w3-bar-item w3-small fa-fade">
+                        <button class="w3-button w3-small w3-hover-white">
+                            <h1 class="fa-solid fa-rss" id="source-signal" style="color: red;"></h1>
+                        </button>
                     </div>
                     <div class="w3-bar-item w3-small w3-animate-opacity" id="video-inputs" style="display: none;">
                         <label class="w3-bar-item w3-button w3-round-large" for="video-file">
@@ -48,10 +52,9 @@
 
         <div class="w3-row">
             <div class="w3-col">
-                <button class="s-next-control w3-small w3-button w3-round w3-white w3-hover-white" type="button"
-                    style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>Continue&nbsp;&nbsp;</span>
-                    <i class="fa-solid fa-arrow-right"></i>
+                <button class="s-next-control w3-right w3-small w3-button w3-round w3-black" type="button"
+                    style="min-width: 12rem;">
+                    <span>Confirm</span>
                 </button>
             </div>
         </div>

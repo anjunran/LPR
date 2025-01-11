@@ -2,11 +2,20 @@ class DisplayManager {
   constructor() {
     this.display = null;
     this.canvas = null;
+    this.sourceSignal = "source-signal";
   }
 
   initializeDisplays() {
     this.setVideoPlayer();
     this.setCanvasPlayer();
+  }
+
+  toggleSourceSignal(isOn = false) {
+    console.log("toggle");
+
+    document.getElementById(this.sourceSignal).style.color = isOn
+      ? "green"
+      : "red";
   }
 
   setVideoPlayer(playerId = "#video") {
