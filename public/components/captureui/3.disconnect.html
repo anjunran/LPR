@@ -1,0 +1,131 @@
+<div class="app-disconnect" id="app-slide">
+    <main class="w3-border">
+        <div class="w3-bar">
+            <button class="w3-button w3-small w3-bar-item s-previous-control" type="button">
+                <i class="fa-solid fa-arrow-left-long"></i>
+                <span>Back</span>
+            </button>
+            <button class="w3-button w3-small w3-bar-item" type="button" onclick="w3.show('#file-menu')">
+                <i class="fa-regular fa-file"></i>
+                <span>File</span>
+            </button>
+        </div>
+        <h4 class="w3-container">Datas Review</h4>
+        <h6 class="w3-container">
+            <input class="w3-input" type="search" id="plate-search" placeholder="&#9741; Find plate...">
+        </h6>
+        <div class="w3-panel w3-border-top w3-border-bottom" style="height: 250px; overflow: auto;">
+            <table class="w3-table w3-small w3-bordered w3-hoverable w3-margin-bottom w3-animate-top">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all-check"></th>
+                        <th>No</th>
+                        <th>Image</th>
+                        <th>Time</th>
+                        <th>Plates</th>
+                        <th>Accuracy</th>
+                        <th>Rating</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="8">
+                            <i class="fa-solid fa-circle-info"></i>
+                            No Records...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="w3-panel">
+            <h1>Thanks for you visit!</h1>
+            <h4>See you next time.</h4>
+            <button class="w3-button w3-small w3-red w3-card s-jump-control" ui-markup="1" type="button"
+                style="float: right;">
+                <span>
+                    Quit
+                </span>
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </button>
+        </div>
+    </main>
+    <aside class="w3-border w3-animate-left" id="file-menu">
+        <nav class="w3-margin-bottom w3-border-bottom w3-black"
+            style="display: flex; justify-content: space-between; align-items: start;">
+            <span class="w3-large w3-margin-left w3-block" style="margin-block: auto;">LPR</span>
+            <button class="w3-button w3-black" type="button" onclick="w3.hide('#file-menu')">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+        </nav>
+        <nav class="w3-container">
+            <ul class="w3-ul w3-border-none w3-round-large">
+                <li>
+                    <button class="w3-button w3-small w3-container" type="button"
+                        style="width: 100%;padding-block: 4px; display: flex; justify-content: start; gap: 3px; align-items: baseline;">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                        <b>Accurate Responses</b>
+                    </button>
+                </li>
+                <li>
+                    <button class="w3-button w3-small w3-container" type="button"
+                        style="width: 100%;padding-block: 4px; display: flex; justify-content: start; gap: 3px; align-items: baseline;">
+                        <i class="fa-regular fa-thumbs-down"></i>
+                        <b>Irrelevant Contents</b>
+                    </button>
+                </li>
+                <li>
+                    <button class="w3-button w3-small w3-container" type="button"
+                        style="width: 100%;padding-block: 4px; display: flex; justify-content: start; gap: 3px; align-items: baseline;">
+                        <i class="fa-solid fa-check-double"></i>
+                        <b>Corrected</b>
+                    </button>
+                </li>
+                <li>
+                    <button class="w3-button w3-small w3-container" type="button"
+                        style="width: 100%;padding-block: 4px; display: flex; justify-content: start; gap: 3px; align-items: baseline;">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <b>Recents</b>
+                    </button>
+                </li>
+                <li>
+                    <button class="w3-button w3-small w3-container" type="button"
+                        style="width: 100%;padding-block: 4px; display: flex; justify-content: start; gap: 3px; align-items: baseline;">
+                        <i class="fa-regular fa-trash-can"></i>
+                        <b>Deleted</b>
+                    </button>
+                </li>
+                <li>
+                    <p class="w3-small w3-container">
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <b>Download file</b>
+                    </p>
+                    <button class="w3-button w3-block w3-small" type="button" id="csv-download">
+                        <span class="w3-left"><i class="fa-solid fa-caret-right"></i>&nbsp;as CSV</span>
+                    </button>
+                    <button class="w3-button w3-block w3-small" type="button" id="pdf-download">
+                        <span class="w3-left"><i class="fa-solid fa-caret-right"></i>&nbsp;as PDF</span>
+                    </button>
+                </li>
+                <li>
+                    <div class="w3-dropdown-hover w3-white w3-block">
+                        <button class="w3-button w3-small w3-bar-item s-previous-control" type="button">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Account</span>
+                        </button>
+                        <div class="w3-dropdown-content w3-bar-block w3-card-4" style="width: 100%;">
+                            <button class="w3-button w3-bar-item w3-small" type="button">Login</button>
+                            <button class="w3-button w3-bar-item w3-small" type="button">Reset password</button>
+                            <button class="w3-button w3-small w3-bar-item" type="button">
+                                <span>Register</span>
+                            </button>
+                            <button class="w3-button w3-small w3-bar-item w3-text-red" type="button">
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+</div>

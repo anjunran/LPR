@@ -1,0 +1,179 @@
+@import url('./wwwroot/CSS/w3.css');
+@import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Jersey+15&family=Oxanium:wght@200..800&family=Rubik+80s+Fade&display=swap');
+
+/* Variables */
+:root {
+    --container-width: 100%;
+    --header-bg: #333;
+    --header-text-color: #ffffff;
+    --footer-bg: #343a40;
+    --footer-text-color: #ffffff;
+    --padding: 1rem;
+    --border-radius: 0.5rem;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --base-font-size: 16px;
+}
+
+/* Resets and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scroll-behavior: smooth;
+    font-family: "Oxanium", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    border: 1px solid red;
+}
+
+*::-webkit-scrollbar {
+    width: 0;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: var(--padding);
+    user-select: none;
+    font-size: calc(var(--base-font-size) + 0.5vw);
+}
+
+.lpr-container {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: var(--box-shadow);
+    width: var(--container-width);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+header,
+footer {
+    padding: var(--padding);
+    text-align: center;
+    color: var(--header-text-color);
+}
+
+header {
+    background-color: var(--header-bg);
+    font-size: 1.5rem;
+}
+
+footer {
+    background-color: var(--footer-bg);
+}
+
+section {
+    position: relative;
+    padding: calc(var(--padding) + 4px);
+    overflow-y: auto;
+}
+
+.section-item {
+    position: relative;
+    height: 100%;
+}
+
+#app-slide {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 100%;
+}
+
+#app-slide:nth-of-type(2) {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.app-devices nav {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: .5rem;
+}
+
+.app-main,
+.app-disconnect {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 400px 1fr;
+    grid-template-areas: "aside main";
+    height: 100%;
+}
+
+.app-main aside,
+.app-disconnect aside {
+    grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
+    overflow-y: auto;
+    padding-bottom: 3rem;
+}
+
+.app-main aside button {
+    min-height: 1rem;
+    font-weight: bold;
+    font-size: smaller;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px !important;
+    flex-shrink: 0;
+}
+
+.app-main aside button input {
+    padding: 3px !important;
+}
+
+.app-main aside nav {
+    color: #333;
+    padding: 8px 12px;
+}
+
+.app-main aside nav:first-of-type>div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #fff;
+}
+
+.app-main aside nav label.w3-label,
+.app-devices nav label {
+    width: 100%;
+    text-transform: capitalize;
+    font-size: 12px !important;
+}
+
+.app-main aside nav select.w3-select {
+    font-size: 12px !important;
+}
+
+.app-main main,
+.app-disconnect main {
+    grid-area: main;
+}
+
+select {
+    padding-inline: 10px !important;
+    font-size: smaller;
+}

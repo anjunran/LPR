@@ -1,0 +1,192 @@
+<div class="app-main w3-animate-left" id="app-slide">
+    <main class="w3-container">
+        <canvas class="canvas" id="canvas"></canvas>
+    </main>
+    <aside class="">
+
+
+        <nav class="video-controls w3-round-large w3-border w3-card" style="background-color: #272727;">
+            <div class="w3-row w3-padding-small w3-small w3-margin-top">
+                <div class="w3-col s4">
+                    <b><i class="fa-solid fa-video w3-text-red fa-fade"></i></b>
+                </div>
+                <div class="w3-col s8 w3-right-align" id="device-name">
+                    <p class="w3-text-red">Not available</p>
+                </div>
+            </div>
+            <div class="w3-row w3-border-0" style="margin-top: .25rem;">
+                <div class="w3-col">
+                    <button class="w3-button w3-medium w3-text-white w3-round s-previous-control w3-right" style="background-color: #272727;">
+                        <i class="fa-solid fa-list-ul"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <nav class="video-controls w3-round-large w3-border ">
+            <div>
+                <button class="w3-button w3-block w3-round-large w3-small w3-text-white w3-padding w3-light-gray"
+                    type="button" onclick="w3.show('#captureSpeed')"
+                    style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="w3-row w3-block w3-padding-small w3-border-bottom">
+                        <div class="w3-col">
+                            <b class="w3-small w3-text-black w3-left">Capture Speed</b>
+                        </div>
+                    </div>
+                    <div class="w3-row w3-block w3-padding-small">
+                        <div class="w3-col l2 w3-padding-tiny">
+                            <span class="w3-text-black">Rate</span>
+                        </div>
+                        <div class="w3-col l10">
+                            <input class="w3-input w3-tiny w3-round-large w3-center w3-dark-gray" placeholder="img/sec"
+                                type="text" id="reading-rate" value="5 img/sec" readonly>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </nav>
+
+        <button class="w3-button w3-small w3-round-large w3-border " onclick="w3.show('#video-filters')">
+            Filters
+            <i class="fa-regular fa-circle-dot"></i>
+        </button>
+
+        <nav class="w3-container w3-round-large w3-border w3-animate-opacity" id="video-filters" style="display: none;">
+            <div class="w3-row w3-border-bottom w3-container">
+                <div class="w3-col s8">
+                    <label class="w3-small w3-text-black" for="grayscale-filter">
+                        Grayscale <span id="grayscale-level" class="w3-text-gray">0.5</span>
+                    </label>
+                </div>
+                <div class="w3-col s4">
+                    <input class="w3-check w3-small w3-right" type="checkbox" id="grayscale-filter">
+                </div>
+            </div>
+
+            <div class="w3-row w3-border-bottom w3-container">
+                <div class="w3-col s8">
+                    <label class="w3-small w3-text-black" for="gaussian-filter">
+                        Gaussian Blur <span id="gaussian-blur-level" class="w3-text-gray">0.5</span>
+                    </label>
+                </div>
+                <div class="w3-col s4">
+                    <input class="w3-check w3-small w3-right" type="checkbox" id="gaussian-filter">
+                </div>
+            </div>
+
+            <div class="w3-row w3-border-bottom w3-container">
+                <div class="w3-col s8">
+                    <label class="w3-small w3-text-black" for="bw-filter">
+                        B/W <span id="bw-level" class="w3-text-gray">0.5</span>
+                    </label>
+                </div>
+                <div class="w3-col s4">
+                    <input class="w3-check w3-small w3-right" type="checkbox" id="bw-filter">
+                </div>
+            </div>
+
+            <div class="w3-row w3-border-bottom w3-container">
+                <div class="w3-col s8">
+                    <label class="w3-small w3-text-black" for="edge-detect-filter">
+                        Detect Edges
+                    </label>
+                </div>
+                <div class="w3-col s4">
+                    <input class="w3-check w3-small w3-right" type="checkbox" id="edge-detect-filter">
+                </div>
+            </div>
+
+            <table class="w3-table w3-round-large w3-padding-small">
+                <tr>
+                    <td>
+                        <button class="w3-button w3-small w3-light-gray w3-round w3-left" type="button"
+                            onclick="w3.show('#filterLevels')">
+                            <i class="fa-solid fa-gear"></i> <span style="margin-inline: auto;">&nbsp;Levels</span>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="w3-button w3-small w3-dark-gray w3-round w3-right" type="button"
+                            onclick="w3.hide('#video-filters')">
+                            <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </nav>
+
+        <button class="w3-button w3-small w3-round-large w3-border" onclick="w3.show('#video-quality')">
+            Image quality
+            <i class="fa-regular fa-circle-dot"></i>
+        </button>
+
+        <nav class="w3-round-large w3-border w3-animate-opacity" id="video-quality" style="display: none;">
+            <div class="w3-row w3-padding-small w3-border-bottom">
+                <div class="w3-col s6">
+                    <label class="w3-small w3-text-black" for="frame-quality">Frame Quality</label>
+                </div>
+                <div class="w3-col s6">
+                    <select class="w3-select w3-small w3-round-large w3-block" id="frame-quality">
+                        <option value="high">HD (Low FPS)</option>
+                        <option value="medium">Medium (Balanced)</option>
+                        <option value="low">Low (High FPS)</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="w3-table w3-padding-small">
+                <tr>
+                    <td class="w3-right-align">
+                        <button class="w3-button w3-small w3-dark-gray w3-round w3-right" type="button"
+                            onclick="w3.hide('#video-quality')">
+                            <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+
+        </nav>
+
+        <nav class="video-controls w3-round-large w3-border ">
+            <div>
+                <b class="w3-small">Controls</b>
+                <button class="w3-button w3-round-large w3-small" style="width: 100%;" type="button" id="start">
+                    <span>Start Reading</span>
+                    <i class="fa-solid fa-play w3-text-blue"></i>
+                </button>
+            </div>
+            <div>
+                <button class="w3-button w3-round-large w3-small" style="width: 100%;" type="button" id="stop">
+                    <span>Stop</span>
+                    <i class="fa-solid fa-stop w3-text-red"></i>
+                </button>
+            </div>
+            <div>
+                <button class="w3-button w3-round-large w3-small" style="width: 100%;" type="button" id="capture">
+                    <span>Capture</span>
+                    <i class="fa-solid fa-camera w3-text-orange"></i>
+                </button>
+            </div>
+        </nav>
+
+        <nav class="w3-container w3-white w3-round-large w3-border ">
+            <div>
+                <button class="w3-button w3-small w3-hover-light-gray w3-hover-opacity w3-round-large"
+                    style="width: 100%;" type="button" id="exit">
+                    <span>Reset</span>
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
+            </div>
+        </nav>
+
+        <nav class="w3-container w3-white w3-round-large w3-border ">
+            <div>
+                <button class="w3-button w3-small w3-hover-light-gray w3-hover-opacity w3-round-large s-next-control"
+                    style="width: 100%;" type="button" id="exit">
+                    <span>Save & Exit</span>
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </nav>
+
+    </aside>
+</div>

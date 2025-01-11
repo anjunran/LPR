@@ -1,0 +1,229 @@
+<!-- Filter levels -->
+<div id="filterLevels" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-round-large w3-card">
+        <div class="w3-container" style="overflow-y: auto;">
+            <div class="w3-bar w3-small">
+                <h4 class="w3-bar-item w3-large">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>&nbsp;Filter Levels</span>
+                </h4>
+                <div class="w3-bar">
+                    <select id="presetSelect" class="w3-bar-item w3-select w3-small w3-margin-right">
+                        <option selected disabled>&#9873; No presets</option>
+                    </select>
+
+                    <input class="w3-input w3-border-left w3-bar-item w3-small" type="text" id="presetName"
+                        placeholder="&#10149; Preset name...">
+                    <button class="w3-bar-item w3-light-grey w3-hover-dark-gray w3-button w3-small" id="savePresets"
+                        type="button">
+                        <i class="fa-solid fa-plus"></i>
+                        Add to presets
+                    </button>
+                </div>
+                <span onclick="w3.hide('#filterLevels')"
+                    class="w3-button w3-bar-item w3-display-topright w3-medium">&times;</span>
+            </div>
+
+
+            <div class="w3-border w3-round w3-white w3-margin-bottom">
+                <div class="w3-container">
+                    <label class="w3-label w3-small" for="grayscale-range"
+                        class="w3-small w3-text-gray">Grayscale</label>
+                    <input class="w3-input" value="0.5" min="0" max="1" step="0.1" type="range" name="grayscale"
+                        id="grayscale-range" class="w3-input w3-border"
+                        oninput="document.querySelectorAll('#grayscale-level').forEach(lvl => lvl.textContent = this.value);">
+                    <span id="grayscale-level" class="w3-right w3-text-gray w3-small">0.5</span>
+                </div>
+            </div>
+
+            <div class="w3-border w3-round w3-white w3-margin-bottom">
+                <div class="w3-container">
+                    <label class="w3-label w3-small" for="gaussian-blur-range" class="w3-small w3-text-gray">Gaussian
+                        Blur</label>
+                    <input class="w3-input" value="0.5" min="0" max="5" step="0.1" type="range" name="gaussian-blur"
+                        id="gaussian-blur-range" class="w3-input w3-border"
+                        oninput="document.querySelectorAll('#gaussian-blur-level').forEach(lvl => lvl.textContent = this.value);">
+                    <span id="gaussian-blur-level" class="w3-right w3-text-gray w3-small">0.5</span>
+                </div>
+            </div>
+
+            <div class="w3-border w3-round w3-white w3-margin-bottom">
+                <div class="w3-container">
+                    <label class="w3-label w3-small" for="bw-range" class="w3-small w3-text-gray">Black & White</label>
+                    <input class="w3-input" value="0.5" min="0" max="1" step="0.1" type="range" name="bw" id="bw-range"
+                        class="w3-input w3-border"
+                        oninput="document.querySelectorAll('#bw-level').forEach(lvl => lvl.textContent = this.value);">
+                    <span id="bw-level" class="w3-right w3-text-gray w3-small">0.5</span>
+                </div>
+            </div>
+
+            <div class="w3-round w3-white w3-margin-bottom">
+                <div class="w3-bar">
+                    <div class="w3-bar-item w3-border"
+                        style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
+                        <input class="w3-small" type="checkbox" id="autoLevel">
+                        <label class="w3-label w3-small" for="autoLevel">Auto-level</label>
+                    </div>
+                    <button class="w3-button w3-border w3-bar-item w3-small" type="button">Reset
+                        default</button>
+                    <button class="w3-button w3-border w3-bar-item w3-small w3-black w3-hover-opacity w3-hover-green"
+                        type="button">Apply</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Capture speed -->
+<div id="captureSpeed" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-round-large w3-card">
+        <div class="w3-container">
+            <div class="w3-bar w3-small">
+                <h4 class="w3-bar-item w3-large">
+                    <i class="fa-solid fa-wave-square"></i>
+                    <span>&nbsp;Capture speed</span>
+                </h4>
+                <span onclick="w3.hide('#captureSpeed')"
+                    class="w3-button w3-bar-item w3-display-topright w3-medium">&times;</span>
+            </div>
+
+            <div class="w3-border w3-round w3-white w3-margin-bottom">
+                <div class="w3-container">
+                    <label class="w3-label w3-small" for="captureSpeedRate" class="w3-small w3-text-gray">Rate</label>
+                    <input class="w3-input" value="5" min="1" max="30" step="1" type="range" name="rate"
+                        id="captureSpeedRate" class="w3-input w3-border"
+                        onchange="document.querySelectorAll('#reading-rate').forEach(lvl => lvl.value = `${this.value} img/sec`);"
+                        oninput="document.querySelectorAll('#reading-rate').forEach(lvl => lvl.value = `${this.value} img/sec`);">
+                    <div class="w3 bar">
+                        <input id="reading-rate" class="w3-input w3-bar-item w3-border-0 w3-text-gray w3-small w3-right"
+                            type="text" readonly disabled value="5 img/sec">
+                    </div>
+                </div>
+            </div>
+
+            <div class="w3-round w3-white w3-margin-bottom">
+                <div class="w3-bar">
+                    <button id="setting-btn-device" type="button"
+                        class="w3-button w3-bar-item w3-small w3-border w3-margin-right" style="display: none;"
+                        onclick="w3.show('#data-limit')">
+                        <b class="w3-small">Datas limit</b>
+                        <i class="fa-regular fa-circle-dot"></i>
+                    </button>
+                    <button id="setting-btn-file" type="button"
+                        class="w3-button w3-bar-item w3-small w3-border w3-margin-right" style="display: none;"
+                        onclick="w3.show('#video-cutting')">
+                        <b class="w3-small">Video - Cutting</b>
+                        <i class="fa-regular fa-circle-dot"></i>
+                    </button>
+                    <!-- <button class="w3-button w3-border w3-bar-item w3-small" type="button">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <button class="w3-button w3-border w3-bar-item w3-small" type="button">
+                        <i class="fa-solid fa-plus"></i>
+                    </button> -->
+                    <button class="w3-button w3-border w3-bar-item w3-small w3-black w3-hover-opacity w3-right"
+                        type="button" style="min-width: 13rem;">
+                        Apply
+                    </button>
+                </div>
+            </div>
+
+            <div class="w3-row w3-margin-bottom w3-animate-opacity" id="data-limit" style="display: none;">
+                <div class="w3-col">
+                    <nav class="video-controls w3-round-large w3-border">
+                        <div class="w3-row w3-round-large">
+                            <button class="w3-button w3-round-large w3-padding-small w3-block" type="button">
+                                <div class="w3-row w3-block w3-round-large">
+                                    <div class="w3-col s8 w3-padding-small">
+                                        <label class="w3-small w3-text-black w3-left" for="max-image">Max Images</label>
+                                    </div>
+                                    <div class="w3-col s4">
+                                        <input class="w3-input w3-small w3-round-large w3-dark-gray w3-center"
+                                            placeholder="img/sec" type="number" id="max-image" value="30" min="30"
+                                            step="1" max="300" readonly>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="w3-row w3-round-large">
+                            <button class="w3-button w3-round-large w3-padding-small w3-block" type="button">
+                                <div class="w3-row w3-block w3-round-large">
+                                    <div class="w3-col s8 w3-padding-small">
+                                        <label class="w3-small w3-text-black w3-left" for="rec-timeout">Rec
+                                            Timeout</label>
+                                    </div>
+                                    <div class="w3-col s4">
+                                        <input class="w3-input w3-small w3-round-large w3-dark-gray w3-center"
+                                            placeholder="00:00:00" type="text" id="rec-timeout" value="00:00:06"
+                                            readonly>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <table class="w3-table w3-padding-small w3-border-top">
+                            <tr>
+                                <td class="w3-right-align">
+                                    <button class="w3-button w3-small w3-dark-gray w3-round w3-right" type="button"
+                                        onclick="w3.hide('#data-limit')">
+                                        <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </nav>
+                </div>
+            </div>
+
+            <div class="w3-row w3-margin-bottom w3-animate-opacity" id="video-cutting" style="display: none;">
+                <div class="w3-col">
+                    <nav class="video-controls w3-round-large w3-border">
+                        <div class="w3-row">
+                            <button class="w3-button w3-round-large w3-padding-small w3-block" type="button">
+                                <div class="w3-row w3-block w3-round-large">
+                                    <div class="w3-col s8 w3-padding-small">
+                                        <label class="w3-small w3-text-black w3-left" for="cut-start">Start from</label>
+                                    </div>
+                                    <div class="w3-col s4">
+                                        <input class="w3-input w3-small w3-round-large w3-dark-gray w3-center"
+                                            placeholder="00:00:00" type="text" id="cut-start" value="00:00:00" readonly>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <div class="w3-row">
+                            <button class="w3-button w3-round-large w3-padding-small w3-block" type="button">
+                                <div class="w3-row w3-block w3-round-large">
+                                    <div class="w3-col s8 w3-padding-small">
+                                        <label class="w3-small w3-text-black w3-left" for="cut-end">To</label>
+                                    </div>
+                                    <div class="w3-col s4">
+                                        <input class="w3-input w3-small w3-round-large w3-dark-gray w3-center"
+                                            placeholder="00:00:00" type="text" id="cut-end" value="00:00:00" readonly>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+
+                        <table class="w3-table w3-padding-small w3-border-top">
+                            <tr>
+                                <td class="w3-right-align">
+                                    <button class="w3-button w3-small w3-dark-gray w3-round-large w3-right"
+                                        type="button" onclick="w3.hide('#video-cutting')">
+                                        <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

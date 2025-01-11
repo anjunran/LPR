@@ -1,0 +1,59 @@
+<div class="app-devices w3-container w3-animate-opacity" id="app-slide">
+    <section class="w3-container">
+        <div class="w3-bar w3-bar-item">
+            <select class="w3-select w3-bar-item w3-small w3-round w3-border" id="video-mode">
+                <option selected disabled value="">
+                    &#9776; Media Sources
+                </option>
+                <option value="video-device">Cam devices</option>
+                <option value="video-file">Media Video Files</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="w3-container">
+        <div class="w3-row">
+            <div class="w3-col">
+                <video class="w3-round-large" id="video" style="border: 5px solid lime;"></video>
+            </div>
+        </div>
+
+        <div class="w3-row">
+            <div class="w3-col">
+                <div class="w3-bar">
+                    <div class="w3-bar-item w3-small">
+                        
+                    </div>
+                    <div class="w3-bar-item w3-small w3-animate-opacity" id="video-inputs" style="display: none;">
+                        <label class="w3-bar-item w3-button w3-round-large" for="video-file">
+                            <i class="fa-solid fa-cloud-arrow-up fa-bounce w3-margin-right"></i>
+                            Upload a video file
+                        </label>
+                        <input class="w3-input w3-bar-item" type="file" accept="video/*" id="video-file"
+                            style="appearance: none; display: none;">
+                    </div>
+                    <div class="w3-bar-item w3-small w3-animate-opacity" id="video-inputs" style="display: none;">
+                        <div class="" id="video-device">
+                            <label class="w3-label w3-bar-item" for="video-device">
+                                <i class="fa-solid fa-video fa-bounce"></i>
+                            </label>
+                            <select class="w3-select w3-border w3-bar-item w3-round-large" id="video-device-select">
+                                <option selected>Choose the camera to use during reading...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w3-row">
+            <div class="w3-col">
+                <button class="s-next-control w3-small w3-button w3-round w3-white w3-hover-white" type="button"
+                    style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Continue&nbsp;&nbsp;</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+</div>
