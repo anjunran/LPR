@@ -2,26 +2,74 @@ class DisplayManager {
   constructor() {
     this.display = null;
     this.canvas = null;
+    this.displayArea = { width: "", height: "" };
+    this.canvasArea = { width: "", height: "" };
     this.sourceSignal = "source-signal";
+    this.rate = 5;
+    this.quality = "high";
+    this.displayReady = null;
+    this.canvasReady = null;
+    this.controls = new ControlsManager([
+      {
+        selector: ".dm-range-rate",
+        eventType: "input",
+        callback: this.setRate.bind(this),
+      },
+      {
+        selector: ".dm-select-quality",
+        eventType: "change",
+        callback: this.setQuality.bind(this),
+      },
+    ]);
   }
 
   initializeDisplays() {
-    this.setVideoPlayer();
-    this.setCanvasPlayer();
+    this.setVideoPlayer(this.onDisplayReady.bind(this));
+    this.setCanvasPlayer(this.onCanvasReady.bind(this));
+    this.initializeControllers();
+  }
+
+  initializeControllers() {
+    this.controls.initializeControls();
+    this.connectControllers(
+      ["reading-rate", "dm-range-rate"],
+      ["frame-quality", "dm-select-quality"]
+    );
+  }
+
+  connectControllers(...controlList) {
+    controlList.forEach(([targetId, helperClassname]) => {
+      if (this.controls && typeof this.controls.plugController === "function")
+        this.controls.plugController(targetId, helperClassname);
+      else console.warn(`Cannot plug controller: ${targetId}`);
+    });
   }
 
   toggleSourceSignal(isOn = false) {
-    console.log("toggle");
-
     document.getElementById(this.sourceSignal).style.color = isOn
       ? "green"
       : "red";
   }
 
-  setVideoPlayer(playerId = "#video") {
+  setVideoPlayer(callback, playerId = "#video") {
     this.display = document.querySelector(playerId);
     if (!this.display) {
       console.warn(`Video player with ID "${playerId}" not found.`);
+    }
+
+    if (callback && typeof callback == "function") callback(this.display);
+  }
+
+  setVideoPlayerArea() {
+    if (this.display) {
+      const { width, height } = window.getComputedStyle(this.display);
+      this.displayArea = this.displayArea || {}; // Ensure it's initialized
+      Object.assign(this.displayArea, {
+        width: parseFloat(width) || 0,
+        height: parseFloat(height) || 0,
+      });
+    } else {
+      console.warn("Video player is not initialized.");
     }
   }
 
@@ -35,6 +83,14 @@ class DisplayManager {
     this.resetSources();
     this.display.srcObject = stream;
     if (autoplay) this.playVideo();
+  }
+
+  setRate(inp) {
+    this.rate = parseFloat(inp);
+  }
+
+  setQuality(inp) {
+    this.quality = inp;
   }
 
   getVideoPlayer() {
@@ -152,10 +208,22 @@ class DisplayManager {
     }
   }
 
-  setCanvasPlayer(canvasId = "#canvas") {
+  setCanvasPlayer(callback, canvasId = "#canvas") {
     this.canvas = document.querySelector(canvasId);
     if (!this.canvas) {
       console.warn(`Canvas player with ID "${canvasId}" not found.`);
+    }
+
+    if (callback && typeof callback == "function") callback(this.display);
+  }
+
+  setCanvasArea() {
+    if (this.canvas) {
+      const { width, height } = window.getComputedStyle(this.canvas);
+      Object.assign(this.canvasArea, {
+        width: parseFloat(width),
+        height: parseFloat(height),
+      });
     }
   }
 
@@ -380,5 +448,17 @@ class DisplayManager {
       console.error("Canvas player is not initialized.");
       return null;
     }
+  }
+
+  onDisplayReady() {
+    this.setVideoPlayerArea();
+    if (this.displayReady && typeof this.displayReady == "function")
+      this.displayReady(this.display, { ...this.displayArea });
+  }
+
+  onCanvasReady() {
+    this.setCanvasArea();
+    if (this.canvasReady && typeof this.canvasReady == "function")
+      this.canvasReady(this.canvas, { ...this.canvasArea });
   }
 }

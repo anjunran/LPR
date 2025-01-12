@@ -2,19 +2,30 @@ class CaptureUI {
   constructor(appContainer = document.querySelector(".lpr-container")) {
     if (!appContainer)
       throw new Error("[LPR Error] The container element is missing.");
+
     this.container = appContainer;
+    this.source = { file: false, device: false };
+    this.error = null;
+    this.errorMessage = "";
+    this.uiManager = new UIManager(this.container);
     this.state = new StateManager();
     this.filters = new FilterManager();
     this.displayManager = new DisplayManager();
-    this.source = { file: false, device: false };
-    this.cameraManager = new CameraManager(this.onCameraReady.bind(this));
+    this.cameraManager = new CameraManager({
+      onCameraReady: this.onCameraReady.bind(this),
+    });
     this.fileUploader = new FileUploader({
-      onfileready: this.onFileReady.bind(this),
+      onFileReady: this.onFileReady.bind(this),
     });
     this.navigationManager = new NavigationManager();
     this.cache = new Cache();
-    this.error = null;
-    this.errorMessage = "";
+    this.controls = new ControlsManager([
+      {
+        selector: "#video-mode",
+        eventType: "change",
+        callback: this.handleModeChange.bind(this),
+      },
+    ]);
   }
 
   static createInstance() {
@@ -27,7 +38,7 @@ class CaptureUI {
         "[LPR Error] The container element or 'w3.js' is missing."
       );
     try {
-      await this.setUI();
+      await this.uiManager.setUI();
       this.initializeParameters();
     } catch (error) {
       console.error(error.message);
@@ -39,18 +50,17 @@ class CaptureUI {
     this.filters.initialize();
     this.displayManager.initializeDisplays();
     this.navigationManager.initializeNavControls();
-    this.setupSourceControls(this.setSource.bind(this));
+    this.setupSourceControls();
     this.fileUploader.initializeVideoUpload();
   }
 
-  async setupSourceControls(onSourceChange) {
-    const modeSelector = document.querySelector("#video-mode");
-    if (!modeSelector) return console.warn("Mode selector not found.");
+  async setupSourceControls() {
+    this.controls.initializeControls();
+  }
 
-    modeSelector.addEventListener("change", async ({ target }) => {
-      const mode = target.value.split("-")[1]?.trim();
-      if (mode) await onSourceChange(mode);
-    });
+  handleModeChange({ target }) {
+    const mode = target.value.split("-")[1]?.trim();
+    if (mode) this.setSource(mode);
   }
 
   setSource(sourceName) {
@@ -79,61 +89,23 @@ class CaptureUI {
     if (source.device) {
       this.updateCameraList();
     } else if (source.file) {
-      // Something to handle what happen when source selected by user is file-upload
+      console.info("File source selected. Handle accordingly.");
     } else if (!source.device && !source.file) {
       this.displayManager.toggleSourceSignal(false);
     }
 
-    console.log("source-ready");
-    
     this.displayManager.toggleSourceSignal(true);
   }
 
   updateCameraList(dropdownId = "#video-device-select") {
-    (this.source.device
+    const listHandler = this.source.device
       ? this.cameraManager.populateCameraDropdown.bind(this.cameraManager)
-      : this.cameraManager.clearDropdown.bind(this.cameraManager))(dropdownId);
+      : this.cameraManager.clearDropdown.bind(this.cameraManager);
+    listHandler(dropdownId);
   }
 
   isW3Available() {
     return this.container && typeof w3 !== "undefined";
-  }
-
-  async setUI() {
-    const section = this.getSectionElement() || this.createSection();
-    await this.includeComponents(section, this.initializeParameters.bind(this));
-  }
-
-  getSectionElement() {
-    return Array.from(this.container.children).find(
-      (child) => child.tagName === "SECTION"
-    );
-  }
-
-  createSection() {
-    const section = document.createElement("section");
-    this.container.appendChild(section);
-    return section;
-  }
-
-  async includeComponents(section, callback) {
-    try {
-      const response = await fetch(this.getComponentURL());
-      const data = await response.json();
-      section.innerHTML = data.files
-        .map(
-          (file) =>
-            `<div class="section-item" w3-include-html="/components/captureui/${file}"></div>`
-        )
-        .join("");
-      w3.includeHTML(callback);
-    } catch (error) {
-      console.error("[LPR Error] Failed to load components:", error);
-    }
-  }
-
-  getComponentURL() {
-    return new URL("/cui/files", location.origin).toString();
   }
 
   getVideoPlayer() {
@@ -141,14 +113,21 @@ class CaptureUI {
   }
 
   onCameraReady(stream) {
-    if (this.getVideoPlayer()) {
-      this.displayManager.setSourceStream(stream);
-    }
+    const videoPlayer = this.getVideoPlayer();
+    if (videoPlayer) this.displayManager.setSourceStream(stream);
   }
 
-  onFileReady(stream) {
-    if (this.getVideoPlayer()) {
-      this.displayManager.setSourceFile(stream);
+  onFileReady(file) {
+    const videoPlayer = this.getVideoPlayer();
+    if (videoPlayer) this.displayManager.setSourceFile(file);
+  }
+
+  async switchSource(newSource) {
+    try {
+      this.setSource(newSource);
+      console.info(`Switched to ${newSource} source.`);
+    } catch (error) {
+      console.error("Error switching source:", error);
     }
   }
 }

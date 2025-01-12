@@ -1,7 +1,6 @@
 @import url('./wwwroot/CSS/w3.css');
 @import url('https://fonts.googleapis.com/css2?family=Fjalla+One&family=Jersey+15&family=Oxanium:wght@200..800&family=Rubik+80s+Fade&display=swap');
 
-/* Variables */
 :root {
     --container-width: 100%;
     --header-bg: #333;
@@ -14,7 +13,6 @@
     --base-font-size: 16px;
 }
 
-/* Resets and Base Styles */
 * {
     margin: 0;
     padding: 0;

@@ -1,7 +1,9 @@
 class CameraManager {
-  constructor(onCameraReady) {
-    this.stream = null;
+  constructor({ onCameraReady = null } = {}) {
     this.onCameraReady = onCameraReady || null;
+    this.stream = null;
+    this.deviceNameDisplayId = "device-name";
+    this.controls = new ControlsManager();
   }
 
   async startCamera(deviceId = null) {
@@ -11,6 +13,7 @@ class CameraManager {
         video: deviceId ? { deviceId: { exact: deviceId } } : true,
       };
       this.stream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (this.onCameraReady) this.onCameraReady(this.stream);
       return this.stream;
     } catch (error) {
       console.error("Error accessing camera:", error);
@@ -22,6 +25,7 @@ class CameraManager {
     if (this.stream) {
       this.stream.getTracks().forEach((track) => track.stop());
       this.stream = null;
+      console.info("Camera stream stopped.");
     } else {
       console.warn("No active camera stream to stop.");
     }
@@ -51,8 +55,6 @@ class CameraManager {
     placeholderOption.textContent =
       "Choose the camera to use during reading...";
     dropdown.appendChild(placeholderOption);
-
-    dropdown.removeEventListener("change", null);
   }
 
   async populateCameraDropdown(dropdownId) {
@@ -63,9 +65,8 @@ class CameraManager {
     }
 
     const cameras = await this.getAvailableCameras();
-    const camerasLen = cameras.length;
-    dropdown.innerHTML = `<option selected disabled>${camerasLen} Device${
-      camerasLen !== 1 ? "s" : ""
+    dropdown.innerHTML = `<option selected disabled>${cameras.length} Device${
+      cameras.length !== 1 ? "s" : ""
     } Ready</option>`;
 
     cameras.forEach((camera, index) => {
@@ -81,24 +82,47 @@ class CameraManager {
       dropdown.appendChild(option);
     }
 
-    dropdown?.addEventListener("change", async () => {
-      const deviceNameDisplay = document.getElementById("device-name");
-      const cameraName = Array.from(dropdown).find(
-        (n) => n.value === dropdown.value
-      ).textContent;
-
-      const stream = await this.startCamera(dropdown.value);
-      deviceNameDisplay.innerHTML = `<p class="w3-text-green">${cameraName}</p>`;
-      try {
-        if (stream) {
-          if (this.onCameraReady instanceof Function)
-            this.onCameraReady(stream, this.source);
-        } else {
-          console.error("Failed to start the camera stream.");
-        }
-      } catch (error) {
-        console.error("Error starting camera stream:", error);
-      }
+    this.controls.addControls({
+      selector: dropdownId,
+      eventType: "change",
+      callback: this.handleCamSelect.bind(this),
     });
+  }
+
+  async handleCamSelect(event) {
+    const { target } = event;
+    const stream = await this.startCamera(target.value);
+
+    if (stream) {
+      const selectedOption = Array.from(target.options).find(
+        (option) => option.value === target.value
+      );
+
+      if (selectedOption) {
+        this.onCameraConnected({
+          deviceNameDisplay: document.getElementById(this.deviceNameDisplayId),
+          cameraName: selectedOption.textContent,
+        });
+      }
+    } else {
+      console.error("Failed to start the camera stream.");
+    }
+  }
+
+  onCameraConnected({ deviceNameDisplay, cameraName }) {
+    if (deviceNameDisplay) {
+      deviceNameDisplay.innerHTML = `<p class="w3-text-green">${cameraName}</p>`;
+    } else {
+      console.warn("Device name display element not found.");
+    }
+  }
+
+  async switchCamera(deviceId) {
+    try {
+      await this.startCamera(deviceId);
+      console.info("Camera switched successfully.");
+    } catch (error) {
+      console.error("Error switching camera:", error);
+    }
   }
 }

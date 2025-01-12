@@ -2,6 +2,33 @@ class NavigationManager {
   constructor() {
     this.uinav = null;
     this.currentSlideData = {};
+    this.controls = new ControlsManager([
+      {
+        selector: ".s-next-control",
+        eventType: "click",
+        callback: this.handleNext.bind(this),
+      },
+      {
+        selector: ".s-previous-control",
+        eventType: "click",
+        callback: this.hadlePrevious.bind(this),
+      },
+      {
+        selector: ".s-jump-control",
+        eventType: "click",
+        callback: this.handleJump.bind(this),
+      },
+      {
+        selector: ".s-start-control",
+        eventType: "click",
+        callback: this.handleStart.bind(this),
+      },
+      {
+        selector: ".s-end-control",
+        eventType: "click",
+        callback: this.handleEnd.bind(this),
+      },
+    ]);
   }
 
   initializeNavControls() {
@@ -10,21 +37,17 @@ class NavigationManager {
       0,
       this.trackSlideChange.bind(this)
     );
-    this.uinav.jumpTo(2);
-    this.setupNavButtons(".s-next-control", this.uinav.next.bind(this.uinav));
-    this.setupNavButtons(
-      ".s-previous-control",
-      this.uinav.previous.bind(this.uinav)
-    );
-    this.setupNavButtons(".s-jump-control", this.handleJump.bind(this));
-    this.setupNavButtons(".s-start-control", this.handleStart.bind(this));
-    this.setupNavButtons(".s-end-control", this.handleEnd.bind(this));
+
+    this.uinav.jumpTo(3);
+    this.controls.initializeControls();
   }
 
-  setupNavButtons(selector, callback) {
-    document
-      .querySelectorAll(selector)
-      .forEach((btn) => btn.addEventListener("click", callback));
+  handleNext() {
+    if (this.uinav) this.uinav.next();
+  }
+
+  hadlePrevious() {
+    if (this.uinav) this.uinav.previous();
   }
 
   handleJump(event) {
