@@ -1,0 +1,114 @@
+{
+    "default": {
+        "grayscale": 0.5,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1
+    },
+    "Soft Grayscale": {
+        "grayscale": 0.8,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1
+    },
+    "Intense Blur": {
+        "grayscale": 0,
+        "gBlur": 5,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1
+    },
+    "High Contrast BW": {
+        "grayscale": 1,
+        "gBlur": 0,
+        "bw": 1,
+        "contrast": 2,
+        "brightness": 1
+    },
+    "Vintage Faded Look": {
+        "grayscale": 0.6,
+        "gBlur": 2,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1.2
+    },
+    "Clean Monochrome": {
+        "grayscale": 1,
+        "gBlur": 0,
+        "bw": 1,
+        "contrast": 1.5,
+        "brightness": 1.3
+    },
+    "Subtle Blur": {
+        "grayscale": 0,
+        "gBlur": 1,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1
+    },
+    "Dark BW": {
+        "grayscale": 1,
+        "gBlur": 0,
+        "bw": 1,
+        "contrast": 1.2,
+        "brightness": 0.8
+    },
+    "Bright Grayscale": {
+        "grayscale": 0.9,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1.5
+    },
+    "Soft Contrast": {
+        "grayscale": 0.2,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 1.3,
+        "brightness": 1
+    },
+    "Heavy Blur": {
+        "grayscale": 0,
+        "gBlur": 10,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1
+    },
+    "Washed Out": {
+        "grayscale": 0.7,
+        "gBlur": 0.5,
+        "bw": 0,
+        "contrast": 0.8,
+        "brightness": 1.1
+    },
+    "Strong BW": {
+        "grayscale": 1,
+        "gBlur": 0,
+        "bw": 1,
+        "contrast": 3,
+        "brightness": 1
+    },
+    "Light Sepia Tone": {
+        "grayscale": 0.4,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 1,
+        "brightness": 1.2
+    },
+    "Glow Effect": {
+        "grayscale": 0,
+        "gBlur": 3,
+        "bw": 0,
+        "contrast": 1.2,
+        "brightness": 1.5
+    },
+    "Muted Colors": {
+        "grayscale": 0.5,
+        "gBlur": 0,
+        "bw": 0,
+        "contrast": 0.9,
+        "brightness": 1
+    }
+}

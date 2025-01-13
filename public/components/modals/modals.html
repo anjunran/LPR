@@ -8,11 +8,7 @@
                     <span>&nbsp;Filter Levels</span>
                 </h4>
                 <div class="w3-bar">
-                    <select id="presetSelect" class="w3-bar-item w3-select w3-small w3-margin-right">
-                        <option selected disabled>&#9873; No presets</option>
-                    </select>
-
-                    <input class="w3-input w3-border-left w3-bar-item w3-small" type="text" id="presetName"
+                    <input class="w3-input w3-bar-item w3-small" type="text" id="presetName"
                         placeholder="&#10149; Preset name...">
                     <button class="w3-bar-item w3-light-grey w3-hover-dark-gray w3-button w3-small" id="savePresets"
                         type="button">
@@ -47,13 +43,30 @@
                 </div>
             </div>
 
-            <div class="w3-border w3-round w3-white w3-margin-bottom">
-                <div class="w3-container">
-                    <label class="w3-label w3-small" for="bw-range" class="w3-small w3-text-gray">Black & White</label>
-                    <input class="w3-input" value="0.5" min="0" max="1" step="0.1" type="range" name="bw" id="bw-range"
-                        class="w3-input w3-border"
-                        oninput="document.querySelectorAll('#bw-level').forEach(lvl => lvl.textContent = this.value);">
-                    <span id="bw-level" class="w3-right w3-text-gray w3-small">0.5</span>
+            <div class="w3-row w3-border w3-round w3-white w3-margin-bottom">
+                <div class="w3-half">
+                    <div class="w3-round w3-white">
+                        <div class="w3-container">
+                            <label class="w3-label w3-small" for="contrast-range"
+                                class="w3-small w3-text-gray">Contrast</label>
+                            <input class="w3-input" value="1" min="0" max="2" step="0.1" type="range" name="contrast"
+                                id="contrast-range" class="w3-input w3-border"
+                                oninput="document.querySelectorAll('#contrast-level').forEach(lvl => lvl.textContent = this.value);">
+                            <span id="contrast-level" class="w3-right w3-text-gray w3-small">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w3-half">
+                    <div class="w3-round w3-white">
+                        <div class="w3-container">
+                            <label class="w3-label w3-small" for="brightness-range"
+                                class="w3-small w3-text-gray">Brightness</label>
+                            <input class="w3-input" value="1" min="0" max="2" step="0.1" type="range" name="brightness"
+                                id="brightness-range" class="w3-input w3-border"
+                                oninput="document.querySelectorAll('#brightness-level').forEach(lvl => lvl.textContent = this.value);">
+                            <span id="brightness-level" class="w3-right w3-text-gray w3-small">1</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -63,6 +76,13 @@
                         style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
                         <input class="w3-small" type="checkbox" id="autoLevel">
                         <label class="w3-label w3-small" for="autoLevel">Auto-level</label>
+                    </div>
+                    <div class="w3-bar-item w3-border"
+                        style="display: flex; justify-content: space-between; align-items: center; gap: 5px;">
+                        <input class="w3-small w3-right" type="checkbox" id="bw-filter">
+                        <label class="w3-small w3-text-black" for="bw-filter">
+                            B/W
+                        </label>
                     </div>
                     <button class="w3-button w3-border w3-bar-item w3-small" type="button">Reset
                         default</button>

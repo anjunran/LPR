@@ -3,6 +3,8 @@ class FilterManager {
     this.filters = {};
     this.levels = {};
     this.presets = new Cache();
+    this.presetsDisplayId = "presetSelect";
+    this.onPresetLoaded = null;
     this.controls = new ControlsManager([
       {
         selector: ".grayscale-f-switch",
@@ -31,34 +33,51 @@ class FilterManager {
         callback: ({ target }) => this.setFilterLevel("gBlur", target.value),
       },
       {
-        selector: ".bw-f-range",
+        selector: ".contrast-f-range",
         eventType: "input",
-        callback: ({ target }) => this.setFilterLevel("bw", target.value),
+        callback: ({ target }) => this.setFilterLevel("contrast", target.value),
+      },
+      {
+        selector: ".brightness-f-range",
+        eventType: "input",
+        callback: ({ target }) =>
+          this.setFilterLevel("brightness", target.value),
       },
     ]);
   }
 
   initialize(lastFilters = {}, lastFilterLevels = {}) {
-    Object.assign(this.filters, {
-      grayscale: false,
-      gBlur: false,
-      bw: false,
-      ...lastFilters,
-    });
-    Object.assign(this.levels, {
-      grayscale: 0.5,
-      gBlur: 0.5,
-      bw: 0.5,
-      ...lastFilterLevels,
-    });
-    this.setupFilterControls(
-      ["grayscale-filter", "grayscale-f-switch"],
-      ["gaussian-filter", "gBlur-f-switch"],
-      ["bw-filter", "bw-f-switch"],
-      ["grayscale-range", "grayscale-f-range"],
-      ["gaussian-blur-range", "gBlur-f-range"],
-      ["bw-range", "bw-f-range"]
-    );
+    this.onPresetLoaded = (entries) => {
+      this.populatePresetDropdown(entries);
+    };
+
+    this.loadFilterPresets()
+      .then(() => {
+        Object.assign(this.filters, {
+          grayscale: false,
+          gBlur: false,
+          bw: false,
+          ...lastFilters,
+        });
+
+        const defaultLevel = this.presets.get("default");
+
+        Object.assign(this.levels, {
+          ...defaultLevel,
+          ...lastFilterLevels,
+        });
+
+        this.setupFilterControls(
+          ["grayscale-filter", "grayscale-f-switch"],
+          ["gaussian-filter", "gBlur-f-switch"],
+          ["bw-filter", "bw-f-switch"],
+          ["grayscale-range", "grayscale-f-range"],
+          ["gaussian-blur-range", "gBlur-f-range"],
+          ["contrast-range", "contrast-f-range"],
+          ["brightness-range", "brightness-f-range"]
+        );
+      })
+      .catch(console.warn);
   }
 
   setupFilterControls(...controllers) {
@@ -73,6 +92,10 @@ class FilterManager {
     } else {
       console.warn(`Filter "${filterName}" does not exist.`);
     }
+  }
+
+  overideElementValue(elClassname) {
+    const element = document.querySelectorAll(`.${elClassname}`);
   }
 
   getFilter(filterName) {
@@ -119,5 +142,45 @@ class FilterManager {
     return this.filters.hasOwnProperty(filterName)
       ? this.filters[filterName]
       : false;
+  }
+
+  populatePresetDropdown(entries) {
+    const presetSelect = document.querySelectorAll(`#${this.presetsDisplayId}`);
+    const data = Array.from(entries);
+    presetSelect.forEach((select) => {
+      if (select && select.tagName == "SELECT") {
+        select.innerHTML = `<option selected disabled>&#9873; Presets (${data.length})</option>`;
+        data.sort().forEach(([name]) => {
+          const option = document.createElement("option");
+          option.innerHTML = name;
+          option.value = name;
+          select.appendChild(option);
+        });
+      }
+    });
+  }
+
+  addFilterPreset(name, settings) {
+    this.presets.set(name, settings);
+  }
+
+  async loadFilterPresets() {
+    try {
+      const response = await fetch(this.getPresetsURL());
+      const data = await response.json();
+
+      for (const [filterName, settings] of Object.entries(data)) {
+        this.addFilterPreset(filterName, settings);
+      }
+      if (typeof this.onPresetLoaded == "function") {
+        this.onPresetLoaded(this.presets.entries());
+      }
+    } catch (error) {
+      console.error("[LPR Error] Failed to preset filters:", error);
+    }
+  }
+
+  getPresetsURL() {
+    return new URL("/filter/presets", location.origin).toString();
   }
 }

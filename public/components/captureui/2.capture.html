@@ -53,7 +53,8 @@
         </button>
 
         <nav class="w3-container w3-round-large w3-border w3-animate-opacity" id="video-filters" style="display: none;">
-            <div class="w3-row w3-border-bottom w3-container">
+
+            <div class="w3-row w3-container">
                 <div class="w3-col s8">
                     <label class="w3-small w3-text-black" for="grayscale-filter">
                         Grayscale <span id="grayscale-level" class="w3-text-gray">0.5</span>
@@ -64,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="w3-row w3-border-bottom w3-container">
+            <div class="w3-row w3-container">
                 <div class="w3-col s8">
                     <label class="w3-small w3-text-black" for="gaussian-filter">
                         Gaussian Blur <span id="gaussian-blur-level" class="w3-text-gray">0.5</span>
@@ -75,18 +76,7 @@
                 </div>
             </div>
 
-            <div class="w3-row w3-border-bottom w3-container">
-                <div class="w3-col s8">
-                    <label class="w3-small w3-text-black" for="bw-filter">
-                        B/W <span id="bw-level" class="w3-text-gray">0.5</span>
-                    </label>
-                </div>
-                <div class="w3-col s4">
-                    <input class="w3-check w3-small w3-right" type="checkbox" id="bw-filter">
-                </div>
-            </div>
-
-            <div class="w3-row w3-border-bottom w3-container">
+            <div class="w3-row w3-container">
                 <div class="w3-col s8">
                     <label class="w3-small w3-text-black" for="edge-detect-filter">
                         Detect Edges
@@ -98,20 +88,31 @@
             </div>
 
             <table class="w3-table w3-round-large w3-padding-small">
-                <tr>
-                    <td>
-                        <button class="w3-button w3-small w3-light-gray w3-round w3-left" type="button"
-                            onclick="w3.show('#filterLevels')">
-                            <i class="fa-solid fa-gear"></i> <span style="margin-inline: auto;">&nbsp;Levels</span>
-                        </button>
-                    </td>
-                    <td>
-                        <button class="w3-button w3-small w3-dark-gray w3-round w3-right" type="button"
-                            onclick="w3.hide('#video-filters')">
-                            <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
-                        </button>
-                    </td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>
+                            <select id="presetSelect" class="w3-select w3-border w3-round-large w3-small">
+                                <option selected disabled>&#9873; No presets</option>
+                            </select>
+                        </th>
+                        <th style="display: flex;">
+                            <button class="w3-button w3-light-gray w3-round" type="button"
+                                onclick="w3.show('#filterLevels')" style="margin: auto;">
+                                <i class="fa-solid fa-gear w3-small"></i>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="2">
+                            <button class="w3-button w3-small w3-white w3-round w3-right" type="button"
+                                onclick="w3.hide('#video-filters')">
+                                Close</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </nav>
 
@@ -121,12 +122,12 @@
         </button>
 
         <nav class="w3-round-large w3-border w3-animate-opacity" id="video-quality" style="display: none;">
-            <div class="w3-row w3-padding-small w3-border-bottom">
+            <div class="w3-row w3-padding-small">
                 <div class="w3-col s6">
                     <label class="w3-small w3-text-black" for="frame-quality">Frame Quality</label>
                 </div>
                 <div class="w3-col s6">
-                    <select class="w3-select w3-small w3-round-large w3-block" id="frame-quality">
+                    <select class="w3-select w3-border w3-small w3-round-large w3-block" id="frame-quality">
                         <option value="high">HD (Low FPS)</option>
                         <option value="medium">Medium (Balanced)</option>
                         <option value="low">Low (High FPS)</option>
@@ -137,9 +138,9 @@
             <table class="w3-table w3-padding-small">
                 <tr>
                     <td class="w3-right-align">
-                        <button class="w3-button w3-small w3-dark-gray w3-round w3-right" type="button"
+                        <button class="w3-button w3-small w3-white w3-round w3-right" type="button"
                             onclick="w3.hide('#video-quality')">
-                            <i class="fa-solid fa-circle-xmark"></i> <span>&nbsp;Close</span>
+                            Close</span>
                         </button>
                     </td>
                 </tr>

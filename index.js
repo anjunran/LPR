@@ -3,11 +3,13 @@ const path = require("path");
 require("dotenv").config();
 
 const cuiRouter = require("./routes/cui.router");
+const filterRouter = require("./routes/filters.router");
 
 const app = express();
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/cui", cuiRouter);
+app.use("/filter", filterRouter);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
