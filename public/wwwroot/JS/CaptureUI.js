@@ -4,10 +4,13 @@ class CaptureUI {
       throw new Error("[LPR Error] The container element is missing.");
 
     this.container = appContainer;
+    this.uiManager = new UIManager(
+      this.container,
+      this.initializeParameters.bind(this)
+    );
     this.source = { file: false, device: false };
     this.error = null;
     this.errorMessage = "";
-    this.uiManager = new UIManager(this.container);
     this.state = new StateManager();
     this.filters = new FilterManager();
     this.displayManager = new DisplayManager();
@@ -38,8 +41,7 @@ class CaptureUI {
         "[LPR Error] The container element or 'w3.js' is missing."
       );
     try {
-      await this.uiManager.setUI();
-      this.initializeParameters();
+      await this.uiManager.initializeUI();
     } catch (error) {
       console.error(error.message);
     }

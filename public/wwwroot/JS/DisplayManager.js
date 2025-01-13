@@ -32,7 +32,7 @@ class DisplayManager {
   initializeControllers() {
     this.controls.initializeControls();
     this.connectControllers(
-      ["reading-rate", "dm-range-rate"],
+      ["captureSpeedRate", "dm-range-rate"],
       ["frame-quality", "dm-select-quality"]
     );
   }
@@ -85,12 +85,12 @@ class DisplayManager {
     if (autoplay) this.playVideo();
   }
 
-  setRate(inp) {
-    this.rate = parseFloat(inp);
+  setRate(event) {
+    this.rate = parseFloat(event.target.value);
   }
 
-  setQuality(inp) {
-    this.quality = inp;
+  setQuality(event) {
+    this.quality = event.target.value;
   }
 
   getVideoPlayer() {

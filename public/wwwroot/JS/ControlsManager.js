@@ -1,21 +1,53 @@
 class ControlsManager {
   constructor(initialControls = []) {
-    this.controls = [...initialControls];
+    this.controls = new Map();
+    this.addControls(initialControls);
   }
 
   initializeControls() {
-    for (const control of this.controls) {
-      this.setupControls(control);
-    }
+    this.controls.forEach((control) => this.setupControls(control));
   }
 
   addControls(newControls = []) {
-    if (Array.isArray(newControls)) {
-      this.controls.push(...newControls);
-    } else if (newControls) {
-      this.controls.push(newControls);
-    }
-    this.initializeControls();
+    const defaultProps = {
+      isPlugged: false,
+      onPlug: null,
+      targetCount: 0,
+      get targetElement() {
+        return this.isPlugged ? document.querySelectorAll(this.selector) : null;
+      },
+      setTargetElement(target) {
+        const selector = String(this.selector).replace(/^./, "");
+        if (!target) return;
+        if (target instanceof NodeList || Array.isArray(target))
+          target.forEach((el) => this.applyPlugLogic(el, selector));
+        else if (target instanceof HTMLElement)
+          this.applyPlugLogic(target, selector);
+      },
+      applyPlugLogic(target, selector) {
+        if (!target.classList.contains(selector)) {
+          target.classList.add(selector);
+          if (typeof this.onPlug === "function") this.onPlug(target);
+          this.targetCount += 1;
+          this.isPlugged = true;
+        }
+      },
+    };
+
+    const setupProperties = (config) => {
+      return { ...defaultProps, ...config };
+    };
+
+    const configuredControls = Array.isArray(newControls)
+      ? newControls.map(setupProperties)
+      : [setupProperties(newControls)];
+
+    configuredControls.forEach((control) => {
+      if (!this.controls.has(control.selector)) {
+        this.controls.set(control.selector, control);
+        this.setupControls(control);
+      }
+    });
   }
 
   setupControls({ selector, eventType, callback, update = null }) {
@@ -24,57 +56,71 @@ class ControlsManager {
       return;
     }
 
-    document
-      .querySelectorAll(selector)
-      .forEach((controller) =>
-        controller.removeEventListener(eventType, (e) => callback(e, update))
-      );
-
-    document
-      .querySelectorAll(selector)
-      .forEach((controller) =>
-        controller.addEventListener(eventType, (e) => callback(e, update))
-      );
+    document.querySelectorAll(selector).forEach((controller) => {
+      if (!controller.dataset.eventBound) {
+        controller.addEventListener(
+          eventType,
+          (e) => callback(e, update),
+          false
+        );
+        controller.dataset.eventBound = true;
+      }
+    });
   }
 
   removeControls({ selector, eventType, callback }) {
-    document
-      .querySelectorAll(selector)
-      .forEach((controller) =>
-        controller.removeEventListener(eventType, (e) => callback(e))
-      );
+    document.querySelectorAll(selector).forEach((controller) => {
+      controller.removeEventListener(eventType, (e) => callback(e));
+      controller.removeAttribute("data-eventBound");
+    });
   }
 
   clearAllControls() {
     this.controls.forEach((control) => this.removeControls(control));
-    this.controls = [];
+    this.controls.clear();
   }
 
   findControl(selector) {
-    return (
-      this.controls.find((control) => control.selector === selector) || null
-    );
+    return this.controls.get(selector) || null;
   }
 
   updateControl(selector, newConfig) {
-    const controlIndex = this.controls.findIndex(
-      (control) => control.selector === selector
-    );
-    if (controlIndex !== -1) {
-      this.controls[controlIndex] = {
-        ...this.controls[controlIndex],
-        ...newConfig,
-      };
+    if (this.controls.has(selector)) {
+      const updatedControl = { ...this.controls.get(selector), ...newConfig };
+      this.controls.set(selector, updatedControl);
+      this.setupControls(updatedControl);
     }
   }
 
   plugController(targetId, helperSelector) {
-    const target = document.getElementById(targetId);
-    if (target && !target.classList.contains(helperSelector))
-      target.classList.add(helperSelector);
+    const helper = this.findControl(`.${helperSelector}`);
+    if (helper) {
+      helper.onPlug = this.initializeControls.bind(this);
+      helper.setTargetElement(document.querySelectorAll(`#${targetId}`));
+    }
+  }
+
+  refreshControl(selector) {
+    const control = this.findControl(selector);
+    if (control) {
+      this.removeControls(control);
+      this.setupControls(control);
+    }
   }
 
   logControls() {
-    console.table(this.controls);
+    console.table([...this.controls.values()]);
+  }
+
+  disconnectControl(selector) {
+    const control = this.findControl(selector);
+    if (control) {
+      this.removeControls(control);
+      this.controls.delete(selector);
+    }
+  }
+
+  getControlCount() {
+    return this.controls.size;
   }
 }

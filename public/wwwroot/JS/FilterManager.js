@@ -2,6 +2,40 @@ class FilterManager {
   constructor() {
     this.filters = {};
     this.levels = {};
+    this.presets = new Cache();
+    this.controls = new ControlsManager([
+      {
+        selector: ".grayscale-f-switch",
+        eventType: "change",
+        callback: ({ target }) => this.setFilter("grayscale", target.checked),
+      },
+      {
+        selector: ".gBlur-f-switch",
+        eventType: "change",
+        callback: ({ target }) => this.setFilter("gBlur", target.checked),
+      },
+      {
+        selector: ".bw-f-switch",
+        eventType: "change",
+        callback: ({ target }) => this.setFilter("bw", target.checked),
+      },
+      {
+        selector: ".grayscale-f-range",
+        eventType: "input",
+        callback: ({ target }) =>
+          this.setFilterLevel("grayscale", target.value),
+      },
+      {
+        selector: ".gBlur-f-range",
+        eventType: "input",
+        callback: ({ target }) => this.setFilterLevel("gBlur", target.value),
+      },
+      {
+        selector: ".bw-f-range",
+        eventType: "input",
+        callback: ({ target }) => this.setFilterLevel("bw", target.value),
+      },
+    ]);
   }
 
   initialize(lastFilters = {}, lastFilterLevels = {}) {
@@ -17,6 +51,20 @@ class FilterManager {
       bw: 0.5,
       ...lastFilterLevels,
     });
+    this.setupFilterControls(
+      ["grayscale-filter", "grayscale-f-switch"],
+      ["gaussian-filter", "gBlur-f-switch"],
+      ["bw-filter", "bw-f-switch"],
+      ["grayscale-range", "grayscale-f-range"],
+      ["gaussian-blur-range", "gBlur-f-range"],
+      ["bw-range", "bw-f-range"]
+    );
+  }
+
+  setupFilterControls(...controllers) {
+    for (const [targetId, helperClassname] of controllers) {
+      this.controls.plugController(targetId, helperClassname);
+    }
   }
 
   setFilter(filterName, value) {
@@ -43,7 +91,7 @@ class FilterManager {
 
   setFilterLevel(filterName, level) {
     if (this.levels.hasOwnProperty(filterName)) {
-      this.levels[filterName] = level;
+      if (this.filters[filterName]) this.levels[filterName] = level;
     } else {
       console.warn(`Filter level "${filterName}" does not exist.`);
     }

@@ -1,9 +1,10 @@
 class UIManager {
-  constructor(container) {
+  constructor(container, onUILoaded) {
     this.container = container;
+    this.onUILoaded = onUILoaded || null;
   }
 
-  async setUI() {
+  async initializeUI() {
     const section = this.getSectionElement() || this.createSection();
     await this.includeComponents(section);
   }
@@ -30,7 +31,11 @@ class UIManager {
             `<div class="section-item" w3-include-html="/components/captureui/${file}"></div>`
         )
         .join("");
-      w3.includeHTML(() => console.info("Components included successfully."));
+      w3.includeHTML(
+        typeof this.onUILoaded == "function"
+          ? this.onUILoaded
+          : () => console.info("Components included successfully.")
+      );
     } catch (error) {
       console.error("[LPR Error] Failed to load components:", error);
     }
