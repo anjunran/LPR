@@ -50,7 +50,7 @@ class ControlsManager {
     });
   }
 
-  setupControls({ selector, eventType, callback, update = null }) {
+  setupControls({ selector, eventType, callback, update = null } = {}) {
     if (!selector || !eventType || typeof callback !== "function") {
       console.warn("Invalid control configuration.");
       return;

@@ -5,102 +5,140 @@ class FilterManager {
     this.presets = new Cache();
     this.presetsDisplayId = "presetSelect";
     this.onPresetLoaded = null;
-    this.controls = new ControlsManager([
-      {
-        selector: ".grayscale-f-switch",
-        eventType: "change",
-        callback: ({ target }) => this.setFilter("grayscale", target.checked),
-      },
-      {
-        selector: ".gBlur-f-switch",
-        eventType: "change",
-        callback: ({ target }) => this.setFilter("gBlur", target.checked),
-      },
-      {
-        selector: ".bw-f-switch",
-        eventType: "change",
-        callback: ({ target }) => this.setFilter("bw", target.checked),
-      },
-      {
-        selector: ".grayscale-f-range",
-        eventType: "input",
-        callback: ({ target }) =>
-          this.setFilterLevel("grayscale", target.value),
-      },
-      {
-        selector: ".gBlur-f-range",
-        eventType: "input",
-        callback: ({ target }) => this.setFilterLevel("gBlur", target.value),
-      },
-      {
-        selector: ".contrast-f-range",
-        eventType: "input",
-        callback: ({ target }) => this.setFilterLevel("contrast", target.value),
-      },
-      {
-        selector: ".brightness-f-range",
-        eventType: "input",
-        callback: ({ target }) =>
-          this.setFilterLevel("brightness", target.value),
-      },
-    ]);
+    this.retryConfig = { retries: 3, delay: 1000 }; // Configurable retry mechanism
   }
 
-  initialize(lastFilters = {}, lastFilterLevels = {}) {
-    this.onPresetLoaded = (entries) => {
-      this.populatePresetDropdown(entries);
-    };
+  async initialize(lastFilters = {}, lastFilterLevels = {}) {
+    this.onPresetLoaded = (entries) =>
+      this.populatePresetDropdown(Array.from(entries));
 
-    this.loadFilterPresets()
-      .then(() => {
-        Object.assign(this.filters, {
-          grayscale: false,
-          gBlur: false,
-          bw: false,
-          ...lastFilters,
-        });
+    try {
+      await this.loadFilterPresets();
 
-        const defaultLevel = this.presets.get("default");
+      this.filters = {
+        grayscale: false,
+        gBlur: false,
+        bw: false,
+        ...lastFilters,
+      };
 
-        Object.assign(this.levels, {
-          ...defaultLevel,
-          ...lastFilterLevels,
-        });
+      this.levels = {
+        ...this.presets.get("default"),
+        ...lastFilterLevels,
+      };
 
-        this.setupFilterControls(
-          ["grayscale-filter", "grayscale-f-switch"],
-          ["gaussian-filter", "gBlur-f-switch"],
-          ["bw-filter", "bw-f-switch"],
-          ["grayscale-range", "grayscale-f-range"],
-          ["gaussian-blur-range", "gBlur-f-range"],
-          ["contrast-range", "contrast-f-range"],
-          ["brightness-range", "brightness-f-range"]
-        );
-      })
-      .catch(console.warn);
+      const controlsConfig = this.createControlsConfig(
+        ["grayscale", "gBlur", "bw"],
+        ["grayscale", "gBlur", "contrast", "brightness"]
+      );
+
+      const plugConfigs = [
+        ["grayscale-filter", "grayscale-f-switch"],
+        ["gaussian-filter", "gBlur-f-switch"],
+        ["bw-filter", "bw-f-switch"],
+        ["grayscale-range", "grayscale-f-range"],
+        ["gaussian-blur-range", "gBlur-f-range"],
+        ["contrast-range", "contrast-f-range"],
+        ["brightness-range", "brightness-f-range"],
+      ];
+
+      this.controls = new ControlsManager(controlsConfig);
+      this.setupFilterControls(plugConfigs);
+    } catch (error) {
+      console.warn("Initialization error:", error);
+    }
   }
 
-  setupFilterControls(...controllers) {
-    for (const [targetId, helperClassname] of controllers) {
+  createControlsConfig(filterSwitches, filterRanges) {
+    const switchControls = filterSwitches.map((filter) => ({
+      selector: `.${filter}-f-switch`,
+      eventType: "change",
+      callback: ({ target }) => this.setFilter(filter, target.checked),
+    }));
+
+    const rangeControls = filterRanges.map((filter) => ({
+      selector: `.${filter}-f-range`,
+      eventType: "input",
+      callback: this.handleRangeChange.bind(this),
+      update: this.handleRangeUpdate.bind(this),
+    }));
+
+    return [...switchControls, ...rangeControls];
+  }
+
+  setupFilterControls(plugConfigs) {
+    for (const [targetId, helperClassname] of plugConfigs) {
       this.controls.plugController(targetId, helperClassname);
+      this.overrideElementValue(helperClassname);
     }
   }
 
   setFilter(filterName, value) {
-    if (this.filters.hasOwnProperty(filterName)) {
+    if (filterName in this.filters) {
       this.filters[filterName] = value;
     } else {
       console.warn(`Filter "${filterName}" does not exist.`);
     }
   }
 
-  overideElementValue(elClassname) {
-    const element = document.querySelectorAll(`.${elClassname}`);
+  handleRangeChange({ target }, update) {
+    const filterName = Array.from(target.classList)
+      .toReversed()[0]
+      .split("-")[0];
+
+    if (filterName in this.levels) {
+      this.setFilterLevel(filterName, target.value);
+      if (update) update(target, filterName);
+    }
+  }
+
+  handleRangeUpdate(target, filterName) {
+    this.overrideElementValue(`.${filterName}-f-range`);
+  }
+
+  overrideElementValue(nodeClassName) {
+    const elements = document.querySelectorAll(
+      String(nodeClassName).startsWith(".")
+        ? nodeClassName
+        : `.${nodeClassName}`
+    );
+
+    elements.forEach((el) => {
+      const [parameter, , type] = nodeClassName.split("-");
+      const property = parameter.replace(".", "");
+      if (type === "switch") {
+        el.checked = this.filters[property];
+      } else if (type === "range") {
+        const newValue = this.levels[property] || 0;
+        el.value = newValue;
+        this.setRangeLabelValue(el, newValue);
+      }
+    });
+  }
+
+  setRangeLabelValue(range, value) {
+    if (range.nextElementSibling) {
+      range.nextElementSibling.innerHTML = value;
+    }
+  }
+
+  setFilterLevel(filterName, level) {
+    if (filterName in this.levels) {
+      this.levels[filterName] = level;
+    } else {
+      console.warn(`Filter level "${filterName}" does not exist.`);
+    }
   }
 
   getFilter(filterName) {
     return this.filters.hasOwnProperty(filterName)
       ? this.filters[filterName]
+      : null;
+  }
+
+  getFilterLevel(filterName) {
+    return this.levels.hasOwnProperty(filterName)
+      ? this.levels[filterName]
       : null;
   }
 
@@ -110,20 +148,6 @@ class FilterManager {
     } else {
       console.warn(`Filter "${filterName}" does not exist.`);
     }
-  }
-
-  setFilterLevel(filterName, level) {
-    if (this.levels.hasOwnProperty(filterName)) {
-      if (this.filters[filterName]) this.levels[filterName] = level;
-    } else {
-      console.warn(`Filter level "${filterName}" does not exist.`);
-    }
-  }
-
-  getFilterLevel(filterName) {
-    return this.levels.hasOwnProperty(filterName)
-      ? this.levels[filterName]
-      : null;
   }
 
   resetFilters() {
@@ -145,19 +169,18 @@ class FilterManager {
   }
 
   populatePresetDropdown(entries) {
-    const presetSelect = document.querySelectorAll(`#${this.presetsDisplayId}`);
-    const data = Array.from(entries);
-    presetSelect.forEach((select) => {
-      if (select && select.tagName == "SELECT") {
-        select.innerHTML = `<option selected disabled>&#9873; Presets (${data.length})</option>`;
-        data.sort().forEach(([name]) => {
+    const presetSelect = document.querySelector(`#${this.presetsDisplayId}`);
+    if (presetSelect) {
+      presetSelect.innerHTML = `<option selected disabled>&#9873; Presets (${entries.length})</option>`;
+      Array.from(entries)
+        .sort()
+        .forEach(([name]) => {
           const option = document.createElement("option");
-          option.innerHTML = name;
+          option.textContent = name;
           option.value = name;
-          select.appendChild(option);
+          presetSelect.appendChild(option);
         });
-      }
-    });
+    }
   }
 
   addFilterPreset(name, settings) {
@@ -165,19 +188,40 @@ class FilterManager {
   }
 
   async loadFilterPresets() {
-    try {
-      const response = await fetch(this.getPresetsURL());
-      const data = await response.json();
+    let retries = this.retryConfig.retries;
+    const delay = this.retryConfig.delay;
 
-      for (const [filterName, settings] of Object.entries(data)) {
-        this.addFilterPreset(filterName, settings);
+    while (retries > 0) {
+      try {
+        const response = await fetch(this.getPresetsURL());
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+
+        for (const [filterName, settings] of Object.entries(data)) {
+          this.addFilterPreset(filterName, settings);
+        }
+
+        if (typeof this.onPresetLoaded === "function") {
+          this.onPresetLoaded(this.presets.entries());
+        }
+
+        return;
+      } catch (error) {
+        console.error("[LPR Error] Failed to load filter presets:", error);
+        retries--;
+
+        if (retries === 0) {
+          console.warn("[LPR Error] All retry attempts failed.");
+        } else {
+          console.info(`Retrying... Attempts left: ${retries}`);
+          await this.delayExecution(delay);
+        }
       }
-      if (typeof this.onPresetLoaded == "function") {
-        this.onPresetLoaded(this.presets.entries());
-      }
-    } catch (error) {
-      console.error("[LPR Error] Failed to preset filters:", error);
     }
+  }
+
+  delayExecution(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   getPresetsURL() {
